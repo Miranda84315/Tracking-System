@@ -8,7 +8,7 @@ from object_detection.utils import label_map_util
 from argparse import ArgumentParser
 
 '''
-python detection.py --video_root D:/Code/DukeMTMC/videos/ --save_root D:/Code/TrackingSystem/dataset/ --cam_num 8
+python detection.py --video_root D:/Code/DukeMTMC/videos/ --save_root D:/Code/TrackingSystem/dataset/detections/ --cam_num 8
 '''
 
 parser = ArgumentParser(description='Objection Detection.')
@@ -44,8 +44,8 @@ PartFrames = [[38370, 38370, 38400, 38670, 38370, 38400, 38790, 38370],
               [38370, 38370, 38370, 38670, 38370, 38370, 38490, 38370],
               [38370, 38370, 38370, 38670, 38370, 37350, 28380, 38370],
               [14250, 15390, 10020, 26790, 21060, 0, 0, 7890]]
-start_sequence = 128000
-end_sequence = 128050
+start_sequence = 127720
+end_sequence = 187540
 
 
 def calucate_part(icam, frame):
@@ -62,12 +62,13 @@ def cal_localtime(icam, frame_num):
     return frame_num - start_time[icam - 1] + 1
 
 
-def object_detection(detection_graph, detections, args, category_index):
+def object_detection(detection_graph, args, category_index):
     with detection_graph.as_default():
         with tf.Session(graph=detection_graph) as sess:
 
             for icam in range(1, int(args.cam_num)+1):
                 part_cam_previous = -1
+                detections = []
                 for frame in range(start_sequence, end_sequence):
                     frame_local = cal_localtime(icam, frame)
                     part_cam, part_frame = calucate_part(icam, frame_local)
@@ -77,6 +78,7 @@ def object_detection(detection_graph, detections, args, category_index):
                             icam) + '/0000' + str(part_cam) + '.MTS'
                         cap = cv2.VideoCapture(filename)
                         cap.set(1, part_frame)
+                        part_cam_previous = part_cam
                     if part_cam != part_cam_previous:
                         filename = args.video_root + 'camera' + str(
                             icam) + '/0000' + str(part_cam) + '.MTS'
@@ -107,7 +109,7 @@ def object_detection(detection_graph, detections, args, category_index):
                     scores_new = np.squeeze(scores)
                     category_index_new = category_index
                     max_boxes_to_draw = 5
-                    min_score_thresh = .90
+                    min_score_thresh = .10
                     for i in range(min(max_boxes_to_draw, boxes_new.shape[0])):
                         if scores_new is None or (scores_new[i] > min_score_thresh):
                             test1 = None
@@ -134,20 +136,21 @@ def object_detection(detection_graph, detections, args, category_index):
                                 (left, top, width, height) = (left, top, right - left, bottom - top)
                                 frame_img = cv2.rectangle(frame_img, (left, top), (right, bottom), (0, 255, 0), 2)
 
-                                print(icam, frame, left, top, width, height)
-                                temp = [icam, frame, left, top, width, height]
+                                print(icam, frame, left, top, width, height,scores_new[i])
+                                temp = [icam, frame_local, left, top, width, height, scores_new[i]]
                                 detections.append(temp)
                     cv2.imshow("video", frame_img)
                     cv2.waitKey(1)
                     print(frame)
-    cv2.destroyAllWindows()
+                detections = np.array(detections)
+                detections = detections.reshape((len(detections), 7))  # 2d array of 3x3
+                #scipy.io.savemat(args.save_root + 'camera' + str(icam) + '.mat', mdict={'detections': detections})
 
-    return detections
+    cv2.destroyAllWindows()
 
 
 def main():
     args = parser.parse_args()
-    detections = []
 
     # MODEL_NAME
     MODEL_NAME = args.model_name
@@ -171,7 +174,7 @@ def main():
         label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
     category_index = label_map_util.create_category_index(categories)
 
-    detection = object_detection(detection_graph, detections, args, category_index)
+    object_detection(detection_graph, args, category_index)
 
 
 if __name__ == '__main__':

@@ -45,6 +45,7 @@ for i = 1:numDetections
         estimatedVelocity = searchRangeCenters(targetDetectionIndex,:) - searchRangeCenters(currentDetectionIndex,:);
         estimatedVelocity = estimatedVelocity / (searchRangeFrames(targetDetectionIndex) - searchRangeFrames(currentDetectionIndex));
         
+        %estimatedVelocity = [double(estimatedVelocity(1)), double(estimatedVelocity(2))]
         % Check if speed limit is violated
         estimatedSpeed = norm(estimatedVelocity);
         if estimatedSpeed > speedLimit

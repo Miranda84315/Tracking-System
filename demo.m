@@ -13,12 +13,13 @@ end
 % opts.visualize = true;
 opts.sequence = 2; % trainval-mini
 
+% compute feature
+compute_L0_features(opts);
+
 % Tracklets
-opts.optimization = 'KL';
 compute_L1_tracklets(opts);
 
 % Single-camera trajectories
-opts.optimization = 'KL';
 opts.trajectories.appearance_groups = 1;
 compute_L2_trajectories(opts);
 opts.eval_dir = 'L2-trajectories';

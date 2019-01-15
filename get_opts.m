@@ -5,14 +5,17 @@ addpath(genpath('src'))
 opts = [];
 opts.dataset_path    = 'D:/Code/DukeMTMC/';
 opts.gurobi_path     = 'C:/gurobi800/win64/matlab';
-opts.experiment_root = 'experiments';
-opts.experiment_name = 'demo';
+opts.experiment_root = 'D:/Code/TrackingSystem/experiments';
+opts.experiment_name = 'experiment_v1';
+opts.detection = 'D:/Code/TrackingSystem/dataset/detections/';
+%opts.detection = 'D:/Code/DukeMTMC/detections/';
+opts.feature_name= 'demo';
 
 opts.reader = DukeVideoReader(opts.dataset_path);
 
 % General settings
 opts.eval_dir = 'L3-identities';
-opts.visualize = true;
+opts.visualize = false;
 opts.image_width = 1920;
 opts.image_height = 1080;
 opts.current_camera = -1;
@@ -23,8 +26,9 @@ opts.optimization = 'KL';
 opts.use_groupping = 1;
 opts.num_cam = 8;
 opts.sequence = 2;
-opts.sequence_names = {'trainval', 'trainval_mini', 'test_easy', 'test_hard'};
-opts.sequence_intervals = {47720:227540, 127720:187540,  263504:356648, 227541:263503};
+opts.sequence_names = {'trainval', 'trainval_mini', 'test_easy', 'test_hard','trainval_short'};
+% opts.sequence_intervals = {47720:227540, 127720:187540,  263504:356648, 227541:263503};
+opts.sequence_intervals = {47720:227540, 127720:187540,  263504:356648, 227541:263503,127720:128753};
 opts.start_frames = [5543, 3607, 27244, 31182, 1, 22402, 18968, 46766];
 opts.render_threshold = 0.05;
 opts.load_tracklets = 1;
@@ -70,8 +74,8 @@ net.train_set = 'data/duke_train.csv';
 net.image_root = 'D:/Code/DukeMTMC/DukeMTMC-reID';
 net.model_name = 'resnet_v1_50';
 net.initial_checkpoint = 'resnet_v1_50.ckpt';
-%net.experiment_root = 'experiments/demo_weighted_triplet';
-net.experiment_root = 'experiments/demo_hnm';
+net.experiment_root = 'D:/Code/TrackingSystem/experiments/demo/demo_weighted_triplet';
+%net.experiment_root = 'experiments/demo_hnm';
 net.embedding_dim = 128;
 net.batch_p = 18;
 net.batch_k = 4;

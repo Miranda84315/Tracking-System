@@ -1,4 +1,6 @@
 src/external/mexopencv330/
 src/detection/faster_rcnn_inception_v2_coco_2018_01_28/
-
+experiments/
+src/triplet-reid/experiments/
+dataset/detections
 *.driveupload

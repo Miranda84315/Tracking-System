@@ -109,8 +109,10 @@ def main():
     #sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options, log_device_placement=False))
 
     # Load the args from the original experiment.
+    # -- args_file in 'experiments/demo_weighted_triplet/args.json'
     args_file = os.path.join(args.experiment_root, 'args.json')
 
+    # -- Load the args.json file
     if os.path.isfile(args_file):
         if not args.quiet:
             print('Loading args from {}.'.format(args_file))
@@ -157,6 +159,7 @@ def main():
     num_detections = detections.shape[0]
 
     # Setup a tf Dataset generator
+    # -- generator will load the detection img from duke dataset and resize the detection img  to be the net_input size.
     generator = functools.partial(detections_generator, args.dataset_path, detections, net_input_size[0], net_input_size[1])
     dataset = tf.data.Dataset.from_generator(generator, tf.float32, tf.TensorShape([net_input_size[0], net_input_size[1], 3]))
     

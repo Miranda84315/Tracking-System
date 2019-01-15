@@ -28,6 +28,7 @@ estimatedVelocity       = estimateVelocities(originalDetections, startFrame, end
 spatialGroupIDs         = getSpatialGroupIDs(opts.use_groupping, currentDetectionsIDX, detectionCenters, params);
 
 % Show window detections
+% show_frame = global2local(opts.start_frames(opts.current_camera), startFrame)
 if opts.visualize, trackletsVisualizePart1; end
 
 %% SOLVE A GRAPH PARTITIONING PROBLEM FOR EACH SPATIAL GROUP

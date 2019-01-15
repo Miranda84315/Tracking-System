@@ -2,11 +2,11 @@ function trajectories = getTrajectoryFeatures(opts, trajectories)
 
 % Gather bounding boxes for this trajectory
 detections = [];
-csvfile = sprintf('%s/%s/L3-identities/temp_images_%s/L2images.csv',opts.experiment_root, opts.experiment_name, opts.sequence_names{opts.sequence});
+csvfile = sprintf('%s/%s/L3-identities/temp_images_%s/L2images.csv',opts.experiment_dir, opts.experiment_name, opts.sequence_names{opts.sequence});
 
 
 if opts.identities.extract_images
-    temp_dir = sprintf('%s/%s/L3-identities/temp_images_%s',opts.experiment_root, opts.experiment_name, opts.sequence_names{opts.sequence});
+    temp_dir = sprintf('%s/%s/L3-identities/temp_images_%s',opts.experiment_dir, opts.experiment_name, opts.sequence_names{opts.sequence});
     status = rmdir(temp_dir,'s');
     mkdir(temp_dir);
     fid = fopen(csvfile,'w');
@@ -20,7 +20,7 @@ for i = 1:length(trajectories)
     
     if opts.identities.extract_images
         fprintf('Extracting imgages for trajectory %d/%d\n', i, length(trajectories));
-        mkdir(sprintf('%s/%s/L3-identities/temp_images_%s/%05d/',opts.experiment_root, opts.experiment_name, opts.sequence_names{opts.sequence},   i));
+        mkdir(sprintf('%s/%s/L3-identities/temp_images_%s/%05d/',opts.experiment_dir, opts.experiment_name, opts.sequence_names{opts.sequence},   i));
     end
     
     for k=1:length(inds)
@@ -32,7 +32,7 @@ for i = 1:length(trajectories)
             snapshot = get_bb(img,bb);
             snapshot = imresize(snapshot,[opts.net.input_height, opts.net.input_width]);
             % trajectories(i).trajectories(1).snapshot{k} = snapshot;
-            filename = sprintf('%s/%s/L3-identities/temp_images_%s/%05d/img_%d_%d.jpg',opts.experiment_root, opts.experiment_name, opts.sequence_names{opts.sequence} , i,i,k);
+            filename = sprintf('%s/%s/L3-identities/temp_images_%s/%05d/img_%d_%d.jpg',opts.experiment_dir, opts.experiment_name, opts.sequence_names{opts.sequence} , i,i,k);
             imwrite(snapshot, filename);
             fprintf(fid,'%05d,%s\n',k,filename);
         end
@@ -47,18 +47,16 @@ end
 % features = embed_detections(opts, detections);
 net = opts.net;
 cur_dir = pwd;
-cd src/triplet-reid
-featuresfile = sprintf('%s/%s/L3-identities/L2features_%s.h5',opts.experiment_root, opts.experiment_name, opts.sequence_names{opts.sequence});
+featuresfile = sprintf('%s/%s/L3-identities/L2features_%s.h5',opts.experiment_dir, opts.experiment_name, opts.sequence_names{opts.sequence});
 
-command = strcat('C:\Users\Owner\Anaconda3\envs\tensorflow\python.exe embed.py' , ...
+command = strcat('C:/Users/Owner/Anaconda3/envs/tensorflow/python.exe src/feature/embed.py' , ...
     sprintf(' --experiment_root %s', net.experiment_root), ...
     sprintf(' --image_root %s', fullfile(cur_dir)), ...
     sprintf(' --filename L2features_%s.h5', opts.sequence_names{opts.sequence}), ...
-    sprintf(' --dataset ../../%s', csvfile));
+    sprintf(' --dataset %s', csvfile));
 fprintf(command);
 system(command);
-cd(cur_dir);
-movefile(sprintf('src/triplet-reid/%s/L2features_%s.h5',opts.net.experiment_root, opts.sequence_names{opts.sequence}),featuresfile);
+movefile(sprintf('%s/L2features_%s.h5',opts.net.experiment_root, opts.sequence_names{opts.sequence}),featuresfile);
 
 features = h5read(featuresfile, '/emb');
 features = features';

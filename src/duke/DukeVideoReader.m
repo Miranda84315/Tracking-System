@@ -1,7 +1,7 @@
 classdef DukeVideoReader < handle
 % Example use
 %
-% reader = DukeVideoReader('F:/datasets/DukeMTMC/');
+% reader = DukeVideoReader('D:/Code/DukeMTMC/');
 % camera = 2;
 % frame = 360720; 
 % figure, imshow(reader.getFrame(camera, frame));
