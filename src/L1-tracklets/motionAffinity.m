@@ -3,6 +3,14 @@ function [motionScores, impossibilityMatrix] = motionAffinity(detectionCenters,d
 % A simple motion prediction is performed from a source detection to
 % a target detection to compute the prediction error.
 
+%{
+detectionCenters = spatialGroupDetectionCenters;
+detectionFrames = spatialGroupDetectionFrames;
+estimatedVelocity = spatialGroupEstimatedVelocity;
+speedLimit = params.speed_limit;
+beta = params.beta;
+%}
+
 numDetections       = size(detectionCenters,1);
 impossibilityMatrix = zeros(length(detectionFrames));
 

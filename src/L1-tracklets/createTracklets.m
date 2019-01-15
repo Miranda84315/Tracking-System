@@ -4,7 +4,16 @@ function  tracklets = createTracklets(opts, originalDetections, allFeatures, sta
 %   In the second stage a Binary Integer Program is solved for every space-time
 %   group.
 
+%{
+originalDetections = filteredDetections;
+allFeatures = filteredFeatures;
+startFrame = window_start_frame;
+endFrame = window_end_frame;
+%}
 %% DIVIDE DETECTIONS IN SPATIAL GROUPS
+% -- 先使用getSpatialGroupIDs 的二元樹類聚、cluster的函式用距離來大致區分ID
+% -- 但這邊的還沒用到時空限制(同一個ID不會出現同一個frame)
+
 % Initialize variables
 params          = opts.tracklets;
 totalLabels     = 0; currentInterval = 0;
@@ -20,11 +29,13 @@ detectionCenters        = getBoundingBoxCenters(originalDetections(currentDetect
 detectionFrames         = originalDetections(currentDetectionsIDX, 1);
 
 % Estimate velocities
+% -- 去計算每一個detection與 其他frame中最小距離 的速度 在取平均
 estimatedVelocity       = estimateVelocities(originalDetections, startFrame, endFrame, params.nearest_neighbors, params.speed_limit);
 
 % Spatial groupping
 % -- first use spatial to separate some group and then line 65 use KL algo
 % -- to spearate more detailed 
+% -- 用linkage , cluster得到大略的區分ID
 spatialGroupIDs         = getSpatialGroupIDs(opts.use_groupping, currentDetectionsIDX, detectionCenters, params);
 
 % Show window detections
@@ -32,6 +43,8 @@ spatialGroupIDs         = getSpatialGroupIDs(opts.use_groupping, currentDetectio
 if opts.visualize, trackletsVisualizePart1; end
 
 %% SOLVE A GRAPH PARTITIONING PROBLEM FOR EACH SPATIAL GROUP
+% -- 剛剛得到大致的ID 但還沒用到時空限制(同一個ID不會出現同一個frame)
+% --
 fprintf('Creating tracklets: solving space-time groups ');
 for spatialGroupID = 1 : max(spatialGroupIDs)
     

@@ -2,6 +2,10 @@ function estimatedVelocities = estimateVelocities(originalDetections, startFrame
 % This function estimates the velocity of a detection by calculating the component-wise
 % median of velocities required to reach a specified number of nearest neighbors.
 % Neighbors that exceed a specified speed limit are not considered.
+%{
+nearestNeighbors = params.nearest_neighbors;
+speedLimit = params.speed_limit;
+%}
 
 % Find detections in search range
 searchRangeMask    = intervalSearch(originalDetections(:,1), startFrame - nearestNeighbors, endFrame+ nearestNeighbors);
@@ -10,6 +14,8 @@ searchRangeFrames  = originalDetections(searchRangeMask, 1);
 detectionIndices   = intervalSearch(searchRangeFrames, startFrame, endFrame);
 
 % Compute all pairwise distances 
+% -- pdist2 is to calucute each detection with each detection's distance
+% -- use sqrt((x1-x2)^2 + (y1-y2)^2)
 pairDistance        = pdist2(searchRangeCenters,searchRangeCenters);
 numDetections       = length(detectionIndices);
 estimatedVelocities = zeros(numDetections,2);
@@ -41,6 +47,8 @@ for i = 1:numDetections
         distancesAtThisTimeInstant(detectionsAtThisTimeInstant==0) = inf;
         
         % Find detection closest to the current detection
+        % -- 去算當前的i與每一個時間點frame中 最小距離的速度
+        % -- 速度算法為 x = x2 - x1, y = y2-y1;
         [~, targetDetectionIndex] = min(distancesAtThisTimeInstant);
         estimatedVelocity = searchRangeCenters(targetDetectionIndex,:) - searchRangeCenters(currentDetectionIndex,:);
         estimatedVelocity = estimatedVelocity / (searchRangeFrames(targetDetectionIndex) - searchRangeFrames(currentDetectionIndex));
@@ -53,6 +61,7 @@ for i = 1:numDetections
         end
         
         % Update velocity estimates
+        % -- 把當前的i與其他frame最小距離的所有速度結果都存入這裡
         velocities = [velocities; estimatedVelocity];
         
     end
@@ -62,6 +71,7 @@ for i = 1:numDetections
     end
     
     % Estimate the velocity
+    % -- 最後將結果取x平均 與y 平均
     estimatedVelocities(i,1) = mean(velocities(:,1));
     estimatedVelocities(i,2) = mean(velocities(:,2));
     

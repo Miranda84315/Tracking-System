@@ -15,7 +15,7 @@ opts.reader = DukeVideoReader(opts.dataset_path);
 
 % General settings
 opts.eval_dir = 'L3-identities';
-opts.visualize = false;
+opts.visualize = true;
 opts.image_width = 1920;
 opts.image_height = 1080;
 opts.current_camera = -1;
@@ -28,7 +28,7 @@ opts.num_cam = 8;
 opts.sequence = 2;
 opts.sequence_names = {'trainval', 'trainval_mini', 'test_easy', 'test_hard','trainval_short'};
 % opts.sequence_intervals = {47720:227540, 127720:187540,  263504:356648, 227541:263503};
-opts.sequence_intervals = {47720:227540, 127720:187540,  263504:356648, 227541:263503,127720:128753};
+opts.sequence_intervals = {47720:227540, 127720:187540,  263504:356648, 227541:263503,128403:128653};
 opts.start_frames = [5543, 3607, 27244, 31182, 1, 22402, 18968, 46766];
 opts.render_threshold = 0.05;
 opts.load_tracklets = 1;
