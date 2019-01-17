@@ -1,7 +1,7 @@
 function compute_L1_tracklets(opts)
 % Computes tracklets for all cameras
 
-for iCam = 1:8
+for iCam = 1:1
     
     opts.current_camera = iCam;
     

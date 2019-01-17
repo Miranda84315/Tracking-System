@@ -17,6 +17,7 @@ for i = 1:length(uniqueLabels)
         trajectory.endFrame = max(trajectory.startFrame, tracklets(ind).endFrame);
         trajectory.segmentStart = min(trajectory.segmentStart, tracklets(ind).segmentStart);
         trajectory.segmentEnd = max(trajectory.segmentEnd, tracklets(ind).segmentEnd);
+        % -- 用最後一個時刻的feature來當feature,而不是取平均
         trajectory.feature = tracklets(ind).feature;
     end
     

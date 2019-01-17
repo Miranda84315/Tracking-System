@@ -1,5 +1,8 @@
 function result = solveInGroups(opts, tracklets, labels)
-
+%{
+tracklets = tracklets(inAssociation);
+labels = trackletLabels(inAssociation);
+%}
 global trajectorySolverTime;
 
 params = opts.trajectories;

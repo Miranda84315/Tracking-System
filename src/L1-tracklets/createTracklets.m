@@ -98,6 +98,7 @@ fprintf('\n');
 % Fit a low degree polynomial to include missing detections and smooth the tracklet
 trackletsToSmooth  = originalDetections(currentDetectionsIDX,:);
 featuresAppearance = allFeatures.appearance(currentDetectionsIDX);
+% -- 在這裡產生新的tracklet
 smoothedTracklets  = smoothTracklets(trackletsToSmooth, startFrame, params.window_width, featuresAppearance, params.min_length, currentInterval);
 
 % Assign IDs to all tracklets

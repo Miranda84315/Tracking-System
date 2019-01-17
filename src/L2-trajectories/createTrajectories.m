@@ -4,6 +4,11 @@ function outputTrajectories = createTrajectories( opts, inputTrajectories, start
 %   the fourth stage solves the graph partitioning problem for each
 %   appearance group.
 
+%{
+inputTrajectories = trajectories;
+startTime = startFrame;
+endTime = endFrame;
+%}
 
 % find current, old, and future tracklets
 % -- findTrajectoriesInWindow is to find the index in the time window
@@ -18,7 +23,7 @@ if length(currentTrajectories) <= 1
 end
 
 % select tracklets that will be selected in association. For previously
-% computed trajectories we select only the last three tracklets.
+% computed trajectories we select only the last 5 tracklets.
 inAssociation = []; tracklets = []; trackletLabels = [];
 for i = 1 : length(currentTrajectories)
    for k = 1 : length(currentTrajectories(i).tracklets) 
@@ -26,7 +31,7 @@ for i = 1 : length(currentTrajectories)
        trackletLabels   = [trackletLabels; i]; %#ok
 
        inAssociation(length(trackletLabels)) = false; %#ok
-       % -- why ?????????????????
+       % -- select only the last three tracklets.
        if k >= length(currentTrajectories(i).tracklets) - 5
            inAssociation(length(trackletLabels)) = true; %#ok
        end
@@ -54,6 +59,8 @@ end
 
 % merge co-identified tracklets to extended tracklets
 % -- each identity each struct
+% -- 他的feature會取最後一個時間點的feature
+% -- 而不是取所有的feature平均
 newTrajectories = trackletsToTrajectories(tracklets, labels);
 smoothTrajectories = recomputeTrajectories(newTrajectories);
 
