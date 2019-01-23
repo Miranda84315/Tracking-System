@@ -66,7 +66,7 @@ smoothTrajectories = recomputeTrajectories(newTrajectories);
 
 outputTrajectories = inputTrajectories;
 outputTrajectories(currentTrajectoriesInd) = [];
-outputTrajectories = [outputTrajectories; smoothTrajectories'];
+outputTrajectories = [outputTrajectories; smoothTrajectories];
 
 % show merged tracklets in window 
 if opts.visualize, trajectoriesVisualizePart3; end

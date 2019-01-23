@@ -1,4 +1,4 @@
-function newTrajectories = recomputeTrajectories( trajectories )
+function newTrajectories = recomputeTrajectories( newTrajectories )
 %RECOMPUTETRAJECTORIES Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -6,14 +6,14 @@ function newTrajectories = recomputeTrajectories( trajectories )
 
 segmentLength = 50;
 
-for i = 1:length(trajectories)
+for i = 1:length(newTrajectories)
 
-    segmentStart = trajectories(i).segmentStart;
-    segmentEnd = trajectories(i).segmentEnd;
+    segmentStart = newTrajectories(i).segmentStart;
+    segmentEnd = newTrajectories(i).segmentEnd;
     
     numSegments = (segmentEnd + 1 - segmentStart) / segmentLength;
     
-    alldata = {trajectories(i).tracklets(:).data};
+    alldata = {newTrajectories(i).tracklets(:).data};
     alldata = cell2mat(alldata');
     alldata = sortrows(alldata,2);
     [~, uniqueRows] = unique(alldata(:,1));
@@ -37,8 +37,8 @@ for i = 1:length(trajectories)
     keyData(:,2) = -1;
     newData = fillTrajectories(keyData);
     
-    newTrajectory = trajectories(i);
-    sampleTracklet = trajectories(i).tracklets(1);
+    newTrajectory = newTrajectories(i);
+    sampleTracklet = newTrajectories(i).tracklets(1);
     newTrajectory.tracklets = [];
     
     
@@ -57,14 +57,16 @@ for i = 1:length(trajectories)
         
         tracklet.startFrame = min(tracklet.data(:,1));
         tracklet.endFrame = max(tracklet.data(:,1));
-%         if isempty(tracklet.data)
-%             tracklet.startFrame = min(tracklet.realdata(:,1));
-%             tracklet.endFrame = max(tracklet.realdata(:,1));
-%         end
+         if isempty(tracklet.data)
+             tracklet.startFrame = min(tracklet.realdata(:,1));
+             tracklet.endFrame = max(tracklet.realdata(:,1));
+         end
         newTrajectory.startFrame = min(newTrajectory.startFrame, tracklet.startFrame);
         newTrajectory.endFrame = max(newTrajectory.endFrame, tracklet.endFrame);
         
-        newTrajectory.tracklets = [newTrajectory.tracklets; tracklet];
+        if ~isempty(tracklet.data)
+            newTrajectory.tracklets = [newTrajectory.tracklets; tracklet];
+        end
         
     end
     

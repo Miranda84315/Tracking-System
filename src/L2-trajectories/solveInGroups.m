@@ -46,11 +46,13 @@ for i = 1 : length(allGroups)
     [spacetimeAffinity, impossibilityMatrix, indifferenceMatrix] = getSpaceTimeAffinity(tracklets(indices), params.beta, params.speed_limit, params.indifference_time);
     
     % compute the correlation matrix
+
     correlationMatrix = appearanceAffinity + spacetimeAffinity - 1;
     correlationMatrix = correlationMatrix .* indifferenceMatrix;
     
     correlationMatrix(impossibilityMatrix == 1) = -inf;
     correlationMatrix(sameLabels) = 1;
+    %correlationMatrix(appearanceAffinity>=0.7 & spacetimeAffinity >=0.9) = 0.8;
     
     % show appearance group tracklets
     if opts.visualize, trajectoriesVisualizePart2; end

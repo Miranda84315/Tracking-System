@@ -14,7 +14,7 @@ end
 opts.sequence = 2; % trainval-mini
 
 % compute feature
-compute_L0_features(opts);
+%compute_L0_features(opts);
 
 % Tracklets
 compute_L1_tracklets(opts);

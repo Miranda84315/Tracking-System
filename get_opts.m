@@ -25,10 +25,10 @@ opts.minimum_trajectory_length = 100;
 opts.optimization = 'KL'; 
 opts.use_groupping = 1;
 opts.num_cam = 8;
-opts.sequence = 5;
+opts.sequence = 2;
 opts.sequence_names = {'trainval', 'trainval_mini', 'test_easy', 'test_hard','trainval_short'};
 % opts.sequence_intervals = {47720:227540, 127720:187540,  263504:356648, 227541:263503};
-opts.sequence_intervals = {47720:227540, 127720:187540,  263504:356648, 227541:263503, 127703:128750};
+opts.sequence_intervals = {47720:227540, 127720:187540,  263504:356648, 227541:263503, 127723:128750};
 opts.start_frames = [5543, 3607, 27244, 31182, 1, 22402, 18968, 46766];
 opts.render_threshold = 0.05;
 opts.load_tracklets = 1;
@@ -47,13 +47,13 @@ tracklets.threshold = 8;
 
 % Trajectories
 trajectories = [];
-trajectories.appearance_groups = 0; % determined automatically when zero
+trajectories.appearance_groups = 1; % determined automatically when zero
 trajectories.alpha = 1;
 trajectories.beta = 0.01;
 trajectories.window_width = 300;
 trajectories.overlap = 150;
 trajectories.speed_limit = 30;
-trajectories.indifference_time = 100;
+trajectories.indifference_time = 450;
 trajectories.threshold = 8;
 
 % Identities

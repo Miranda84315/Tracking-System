@@ -19,6 +19,7 @@ load(fullfile(opts.dataset_path, 'ground_truth', 'trainval.mat'));
 % Render one video per camera
 for iCam = 1:opts.num_cam
     
+    iCam=1;
     % Create video
     filename = sprintf('%s/%s/%s/cam%d_%s.mp4',opts.experiment_root, opts.experiment_name, folder, iCam, opts.sequence_names{opts.sequence});
     video = VideoWriter(filename, 'MPEG-4');
