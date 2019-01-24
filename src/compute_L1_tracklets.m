@@ -16,23 +16,27 @@ for iCam = 1:1
     % Load OpenPose detections for current camera
     % -- line 15 will load variable [detections], contains [n x 56] array by
     % -- openpose detector
-    load(fullfile(opts.detection,'top1', sprintf('camera%d.mat',iCam)));
+    load(fullfile(opts.detection,opts.detection_name, sprintf('camera%d.mat',iCam)));
     detections = double(detections);
     % Load features for all detections
     % -- line 20 will load from ...src\triplet-reid\experiments\demo\L0-features
     % -- and is a openpose's detector pre-computed features [128 x n] array
     
     %filename = sprintf('%s/%s/L0-features/top1/features%d.mat',opts.experiment_root,opts.experiment_name,iCam)
-    filename = sprintf('%s/%s/L0-features/top1/features%d.mat',opts.experiment_root,opts.feature_name,iCam)
+    %filename = sprintf('%s%s/features%d.mat',opts.feature_dir, opts.detection_name, iCam)
+    % features   = h5read(sprintf('%s/%s/L0-features/features%d.h5',opts.experiment_root,opts.experiment_name,iCam),'/emb');
+
+    filename = sprintf('%s%s/features%d.mat',opts.feature_dir, opts.detection_name, iCam)
     features_temp   = load(filename);
     features = features_temp.features;
-    % features   = h5read(sprintf('%s/%s/L0-features/features%d.h5',opts.experiment_root,opts.experiment_name,iCam),'/emb');
-   
+    
     features   = double(features');
-    ind = dlmread(fullfile(opts.detection,'top1', sprintf('index%d.txt',iCam)));
-    ind = ind + 1;
-    detections = detections(ind, :);
-    features = features(ind, :);
+    if strcmp(opts.detection_name,'top1')
+        ind = dlmread(fullfile(opts.detection,'top1', sprintf('index%d.txt',iCam)));
+        ind = ind + 1;
+        detections = detections(ind, :);
+        features = features(ind, :);
+    end
     
     all_dets   = detections;
     appearance = cell(size(all_dets,1),1);

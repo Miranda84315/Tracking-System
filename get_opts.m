@@ -8,6 +8,8 @@ opts.gurobi_path     = 'C:/gurobi800/win64/matlab';
 opts.experiment_root = 'D:/Code/TrackingSystem/experiments';
 opts.experiment_name = 'experiment_v2';
 opts.detection = 'D:/Code/TrackingSystem/dataset/detections/';
+opts.detection_name = 'top1';
+opts.feature_dir = 'D:/Code/TrackingSystem/experiments/demo/L0-features/';
 %opts.detection = 'D:/Code/DukeMTMC/detections/';
 opts.feature_name= 'demo';
 
