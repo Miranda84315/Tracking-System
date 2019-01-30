@@ -17,7 +17,11 @@ opts.sequence = 2; % trainval-mini
 %compute_L0_features(opts);
 
 % Tracklets
-compute_L1_tracklets(opts);
+if strcmp(opts.detection_name,'openpose')
+    compute_L1_tracklets_openpose(opts);
+else
+    compute_L1_tracklets(opts);
+end
 
 % Single-camera trajectories
 opts.trajectories.appearance_groups = 1;

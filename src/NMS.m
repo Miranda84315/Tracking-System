@@ -1,6 +1,6 @@
 function detections = NMS(opts, detections_original, iCam)
 command = strcat('C:\Users\Owner\Anaconda3\envs\tensorflow\python.exe src/nms.py' , ...
-    sprintf(' --icam %s', iCam));
+    sprintf(' --icam %d', iCam));
 command
 system(command);
 

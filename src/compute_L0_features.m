@@ -1,7 +1,7 @@
 function compute_L0_features(opts)
 % Computes features for the input poses
 
-for iCam = 1:8
+for iCam = 5:8
     opts.current_camera = iCam;
     % Load poses
     % -- iI change the file path and delete the original part about openpose(1, 18) to detections(1, 6) --
@@ -15,8 +15,8 @@ for iCam = 1:8
     detections = load(detections_save, 'detections')
     detections = detections.detections;
     detections = NMS(opts, detections, iCam);
-    
-    
+    % ---------------
+    opts.experiment_name = 'demo';
     % load(fullfile(opts.dataset_path, 'detections','top1', sprintf('camera%d.mat',iCam)));
     % detections = detections(:,1:6);
     % Compute feature embeddings

@@ -54,7 +54,8 @@ errorMatrix(violators == 1) = Inf;
 % compute indifference matrix
 timeDifference  = frameDifference .* (frameDifference > 0);
 timeDifference  = timeDifference + timeDifference';
-indiffMatrix    = 1 - sigmf(timeDifference,[0.1 indifferenceLimit/2]);
+%indiffMatrix    = 1 - sigmf(timeDifference,[0.1 indifferenceLimit/2]);
+indiffMatrix = 1 - sigmf(timeDifference,[0.05 250]);
 
 % compute space-time affinities
 stAffinity      = 1 - beta1*errorMatrix;
@@ -74,7 +75,6 @@ unionMax        = max([i1, interval2], [], 2);
 overlap         = double(duration1 + duration2 - unionMax + unionMin >= 0);
 
 end
-
 
 
 
