@@ -1,7 +1,7 @@
 function compute_L1_tracklets(opts)
 % Computes tracklets for all cameras
 
-for iCam = 1:1
+for iCam = 2:8
     
     opts.current_camera = iCam;
     
@@ -35,7 +35,7 @@ for iCam = 1:1
         ind = dlmread(fullfile(opts.detection,'top1', sprintf('index%d.txt',iCam)));
         ind = ind + 1;
         detections = detections(ind, :);
-        features = features(ind, :);
+        %features = features(ind, :);
     end
     
     all_dets   = detections;
