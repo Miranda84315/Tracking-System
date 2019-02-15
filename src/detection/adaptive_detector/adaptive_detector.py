@@ -22,6 +22,25 @@ PartFrames = [[38370, 38370, 38400, 38670, 38370, 38400, 38790, 38370], [
                38370], [14250, 15390, 10020, 26790, 21060, 0, 0, 7890]]
 start_sequence = 127720
 end_sequence = 187540
+height = 1080
+width = 1920
+pose_threshold = 0.05
+# each node's connect (1,2) (1,5) (2,3) (3,4) ...
+COCO_connect = [
+    1, 2, 1, 5, 2, 3, 3, 4, 5, 6, 6, 7, 1, 8, 8, 9, 9, 10, 1, 11, 11, 12,
+    12, 13, 1, 0, 0, 14, 14, 16, 0, 15, 15, 17
+]
+COCO_color = [
+    (255, 0, 85), (255, 0, 0), (255, 85, 0), (255, 170, 0), (255, 255, 0), (170, 255, 0),
+    (85, 255, 0), (0, 255, 0), (0, 255, 85), (0, 255, 170), (0, 255, 255), (0, 170, 255),
+    (0, 85, 255), (0, 0, 255), (255, 0, 170), (170, 0, 255), (255, 0, 255), (85, 0, 255)
+]
+COCO_template = [
+    [0, 0], [0, 23], [28, 23], [39, 66], [45, 108], [-28, 23],
+    [-39, 66], [-45, 108], [20, 106], [20, 169], [20, 231], [-20, 106],
+    [-20, 169], [-20, 231], [5, -7], [11, -8], [-5, -7], [-11, -8]
+]
+COCO_template_bb = [[-50, -15], [50, 240]]
 
 
 def calucate_part(icam, frame):
@@ -46,18 +65,6 @@ def load_detection_h5py(detection_path):
 
 
 def draw_pose(poses, img):
-    height = img.shape[0]
-    width = img.shape[1]
-    pose_threshold = 0.05
-    # each node's connect (1,2) (1,5) (2,3) (3,4) ...
-    COCO_connect = [
-        1, 2, 1, 5, 2, 3, 3, 4, 5, 6, 6, 7, 1, 8, 8, 9, 9, 10, 1, 11, 11, 12,
-        12, 13, 1, 0, 0, 14, 14, 16, 0, 15, 15, 17
-    ]
-    COCO_color = [
-        (255, 0, 85), (255, 0, 0), (255, 85, 0), (255, 170, 0), (255, 255, 0), (170, 255, 0),
-        (85, 255, 0), (0, 255, 0), (0, 255, 85), (0, 255, 170), (0, 255, 255), (0, 170, 255),
-        (0, 85, 255), (0, 0, 255), (255, 0, 170), (170, 0, 255), (255, 0, 255), (85, 0, 255)]
     for pose in poses:
         for pair in range(0, int(len(COCO_connect) / 2)):
             # check if the connect is not valid
@@ -76,6 +83,16 @@ def draw_pose(poses, img):
     return img
 
 
+def poseToBoundbox(poses, img):
+    boundingbox = []
+    for pose in poses:
+        pose = np.reshape(pose, (18, 3))
+        valid = [i for i in range(0, 18) if (pose[i, 0] != 0 and pose[i, 1] != 0 and pose[i, 2] >= pose_threshold)]
+        print('pose = ', pose)
+        print('valid = ', valid)
+    return img, boundingbox
+
+
 def show_detections(detection, iCam, frame):
     part_cam, part_frame = calucate_part(iCam, frame)
     filename = 'D:/Code/DukeMTMC/videos/camera' + str(iCam) + '/0000' + str(
@@ -91,7 +108,7 @@ def show_detections(detection, iCam, frame):
     ]
     detection = np.array(detections)[:, 2:]
     img_pose = draw_pose(detection, img)
-
+    img_pose, bb = poseToBoundbox(detection, img_pose)
     return img_pose
 
 
