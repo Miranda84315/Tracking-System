@@ -25,6 +25,7 @@ end_sequence = 187540
 height = 1080
 width = 1920
 pose_threshold = 0.05
+scalingFactor = 1.25
 # each node's connect (1,2) (1,5) (2,3) (3,4) ...
 COCO_connect = [
     1, 2, 1, 5, 2, 3, 3, 4, 5, 6, 6, 7, 1, 8, 8, 9, 9, 10, 1, 11, 11, 12,
@@ -122,14 +123,19 @@ def poseToBoundbox(poses, img):
         fit_top = min(result[2:])
         fit_bottom = max(result[2:])
 
-        left = min(original_left, fit_left) * width
-        right = max(original_right, fit_right) * width
-        top = min(original_top, fit_top) * height
-        bottom = max(original_bottom, fit_bottom) * height
+        left = int(min(original_left, fit_left) * width)
+        right = int(max(original_right, fit_right) * width)
+        top = int(min(original_top, fit_top) * height)
+        bottom = int(max(original_bottom, fit_bottom) * height)
         h = bottom - top + 1
         w = right - left + 1
         pose_boundingbox = [left, top, w, h]
+        pose_boundingbox[0, 1] = pose_boundingbox[0, 1] - 0.5 * (scalingFactor - 1) * pose_boundingbox[2, 3]
+        pose_boundingbox[2, 3] = pose_boundingbox[2, 3] * scalingFactor
+
         boundingbox.append(pose_boundingbox)
+    for (l, t, w, h) in boundingbox:
+        img = cv2.rectangle(img, (l, t), (l + w, t + h), (0, 0, 255), 3)
     return img, boundingbox
 
 
