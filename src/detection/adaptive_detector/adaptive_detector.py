@@ -35,12 +35,12 @@ COCO_color = [
     (85, 255, 0), (0, 255, 0), (0, 255, 85), (0, 255, 170), (0, 255, 255), (0, 170, 255),
     (0, 85, 255), (0, 0, 255), (255, 0, 170), (170, 0, 255), (255, 0, 255), (85, 0, 255)
 ]
-COCO_template = [
+COCO_template = np.array([
     [0, 0], [0, 23], [28, 23], [39, 66], [45, 108], [-28, 23],
     [-39, 66], [-45, 108], [20, 106], [20, 169], [20, 231], [-20, 106],
     [-20, 169], [-20, 231], [5, -7], [11, -8], [-5, -7], [-11, -8]
-]
-COCO_template_bb = [[-50, -15], [50, 240]]
+])
+COCO_template_bb = np.array([[-50, -15], [50, 240]])
 
 
 def calucate_part(icam, frame):
@@ -88,15 +88,54 @@ def poseToBoundbox(poses, img):
     for pose in poses:
         pose = np.reshape(pose, (18, 3))
         valid = [i for i in range(0, 18) if (pose[i, 0] != 0 and pose[i, 1] != 0 and pose[i, 2] >= pose_threshold)]
-        print('pose = ', pose)
-        print('valid = ', valid)
+        if len(valid) < 2:
+            pose_boundingbox = [0, 0, 0, 0]
+            boundingbox.append(pose_boundingbox)
+            continue
+        point_detection = pose[valid, :2]
+        point_templete = np.array([COCO_template[i] for i in valid])
+
+        # 1. fit to templete
+        B = np.reshape([point_detection[:, 0]] + [point_detection[:, 1]], len(point_detection)*2)
+        A = np.zeros((len(point_detection) * 2, 4))
+        A[:len(point_detection), 0] = point_templete[:, 0]
+        A[len(point_detection):, 1] = point_templete[:, 1]
+        A[:len(point_detection), 2] = 1
+        A[len(point_detection):, 3] = 1
+        params, _, _, _ = np.linalg.lstsq(A, B.T)
+
+        A2 = np.zeros((len(COCO_template_bb) * 2, 4))
+        A2[:len(COCO_template_bb), 0] = COCO_template_bb[:, 0]
+        A2[len(COCO_template_bb):, 1] = COCO_template_bb[:, 1]
+        A2[:len(COCO_template_bb), 2] = 1
+        A2[len(COCO_template_bb):, 3] = 1
+        result = np.matmul(A2, params)
+
+        # 2. get bounding box
+        original_left = min(point_detection[:, 0])
+        original_right = max(point_detection[:, 0])
+        original_top = min(point_detection[:, 1])
+        original_bottom = max(point_detection[:, 1])
+
+        fit_left = min(result[:2])
+        fit_right = max(result[:2])
+        fit_top = min(result[2:])
+        fit_bottom = max(result[2:])
+
+        left = min(original_left, fit_left) * width
+        right = max(original_right, fit_right) * width
+        top = min(original_top, fit_top) * height
+        bottom = max(original_bottom, fit_bottom) * height
+        h = bottom - top + 1
+        w = right - left + 1
+        pose_boundingbox = [left, top, w, h]
+        boundingbox.append(pose_boundingbox)
     return img, boundingbox
 
 
 def show_detections(detection, iCam, frame):
     part_cam, part_frame = calucate_part(iCam, frame)
-    filename = 'D:/Code/DukeMTMC/videos/camera' + str(iCam) + '/0000' + str(
-        part_cam) + '.MTS'
+    filename = 'D:/Code/DukeMTMC/videos/camera' + str(iCam) + '/0000' + str(part_cam) + '.MTS'
     cap = cv2.VideoCapture(filename)
     cap.set(1, part_frame)
     _, img = cap.read()
