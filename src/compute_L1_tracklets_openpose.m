@@ -1,7 +1,7 @@
 function compute_L1_tracklets_openpose(opts)
 % Computes tracklets for all cameras
 
-for iCam = 1:1
+for iCam = 1:8
     
     opts.current_camera = iCam;
     

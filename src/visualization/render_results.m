@@ -17,7 +17,7 @@ mkdir([opts.experiment_root, filesep, opts.experiment_name, filesep, folder]);
 load(fullfile(opts.dataset_path, 'ground_truth', 'trainval.mat'));
 
 % Render one video per camera
-for iCam = 1:opts.num_cam
+for iCam = 1:1%opts.num_cam
     
     iCam=1;
     % Create video
