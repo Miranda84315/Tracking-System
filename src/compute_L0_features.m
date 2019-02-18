@@ -1,7 +1,7 @@
 function compute_L0_features(opts)
 % Computes features for the input poses
 
-for iCam = 6:8
+for iCam = 1:8
     opts.current_camera = iCam;
     % Load poses
     % -- iI change the file path and delete the original part about openpose(1, 18) to detections(1, 6) --

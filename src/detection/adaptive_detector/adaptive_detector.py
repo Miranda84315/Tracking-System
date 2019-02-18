@@ -123,15 +123,17 @@ def poseToBoundbox(poses, img):
         fit_top = min(result[2:])
         fit_bottom = max(result[2:])
 
-        left = int(min(original_left, fit_left) * width)
-        right = int(max(original_right, fit_right) * width)
-        top = int(min(original_top, fit_top) * height)
-        bottom = int(max(original_bottom, fit_bottom) * height)
+        left = min(original_left, fit_left) * width
+        right = max(original_right, fit_right) * width
+        top = min(original_top, fit_top) * height
+        bottom = max(original_bottom, fit_bottom) * height
         h = bottom - top + 1
         w = right - left + 1
         pose_boundingbox = [left, top, w, h]
-        pose_boundingbox[0, 1] = pose_boundingbox[0, 1] - 0.5 * (scalingFactor - 1) * pose_boundingbox[2, 3]
-        pose_boundingbox[2, 3] = pose_boundingbox[2, 3] * scalingFactor
+        pose_boundingbox[0] = int(pose_boundingbox[0] - 0.5 * (scalingFactor - 1) * pose_boundingbox[2])
+        pose_boundingbox[1] = int(pose_boundingbox[1] - 0.5 * (scalingFactor - 1) * pose_boundingbox[3])
+        pose_boundingbox[2] = int(pose_boundingbox[2] * scalingFactor)
+        pose_boundingbox[3] = int(pose_boundingbox[3] * scalingFactor)
 
         boundingbox.append(pose_boundingbox)
     for (l, t, w, h) in boundingbox:
@@ -139,14 +141,29 @@ def poseToBoundbox(poses, img):
     return img, boundingbox
 
 
-def show_detections(detection, iCam, frame):
+def draw_bb(detections, img):
+    boundingbox = []
+    for detection in detections:
+        left = int(detection[0])
+        top = int(detection[1])
+        w = int(detection[2])
+        h = int(detection[3])
+        boundingbox.append([left, top, w, h])
+    for (l, t, w, h) in boundingbox:
+        img = cv2.rectangle(img, (l, t), (l + w, t + h), (0, 255, 255), 3)
+    return img, boundingbox
+
+
+def get_img(iCam, frame):
     part_cam, part_frame = calucate_part(iCam, frame)
     filename = 'D:/Code/DukeMTMC/videos/camera' + str(iCam) + '/0000' + str(part_cam) + '.MTS'
     cap = cv2.VideoCapture(filename)
     cap.set(1, part_frame)
     _, img = cap.read()
-    # cv2.imshow("video", img)
-    # cv2.waitKey(1)
+    return img
+
+
+def show_detections_pose(detection, frame, img):
     detections = [
         detection[i] for i in range(0, len(detection))
         if detection[i][1] == frame
@@ -155,6 +172,16 @@ def show_detections(detection, iCam, frame):
     img_pose = draw_pose(detection, img)
     img_pose, bb = poseToBoundbox(detection, img_pose)
     return img_pose
+
+
+def show_detections(detection, frame, img):
+    detections = [
+        detection[i] for i in range(0, len(detection))
+        if detection[i][1] == frame
+    ]
+    detection = np.array(detections)[:, 2:]
+    img, bb = draw_bb(detection, img)
+    return img
 
 
 # def adaptive_detector(detection1, detection2):
@@ -177,7 +204,10 @@ def main():
         if detection2[i, 1] >= start and detection2[i, 1] <= end
     ]
 
-    img = show_detections(detection2, iCam, 122178)
+    frame = 122200
+    img = get_img(iCam, frame)
+    img = show_detections(detection1, frame, img)
+    img = show_detections_pose(detection2, frame, img)
     cv2.imshow("video", img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()

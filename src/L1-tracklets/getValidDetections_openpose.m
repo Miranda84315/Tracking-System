@@ -16,7 +16,7 @@ for k = 1:size(detections_in_interval,1)
     end
     
     % Check detection confidence
-    if num_visible(k) < 5 || detections_conf(k) < 4
+    if num_visible(k) < 5 || detections_conf(k) < 5
         valid(k) = 0;
         continue;
     end
