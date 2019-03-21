@@ -42,6 +42,10 @@ for i = 1:numTracklets
     
     % Compute appearance features
     medianFeature    = median(cell2mat(featuresAppearance(mask)));
+    % *-- log 2019/3/21
+    %temp_feature = cell2mat(featuresAppearance(mask));
+    %medianFeature    =  temp_feature(size(temp_feature, 1), :);
+    % *-- log 2019/3/21 end
     centers          = getBoundingBoxCenters(currentTracklet(:,[3:6]));
     centerPoint      = median(centers); % assumes more then one detection per tracklet
     centerPointWorld = 1;% median(currentTracklet(:,[7,8]));

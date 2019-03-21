@@ -13,12 +13,9 @@ end
 % opts.visualize = true;
 opts.sequence = 2; % trainval-mini
 
-getBackground(opts);
-getDeleteDetection(opts);
 % compute feature
 %compute_L0_features(opts);
-
-
+getBackground(opts, detections, iCam);
 % Tracklets
 if strcmp(opts.detection_name,'openpose')
     compute_L1_tracklets_openpose(opts);

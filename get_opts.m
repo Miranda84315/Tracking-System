@@ -6,7 +6,7 @@ opts = [];
 opts.dataset_path    = 'D:/Code/DukeMTMC/';
 opts.gurobi_path     = 'C:/gurobi800/win64/matlab';
 opts.experiment_root = 'D:/Code/TrackingSystem/experiments';
-opts.experiment_name = 'experiment_v3';
+opts.experiment_name = 'experiment_v4';
 opts.detection = 'D:/Code/TrackingSystem/dataset/detections/';
 opts.detection_name = 'openpose';
 opts.feature_dir = 'D:/Code/TrackingSystem/experiments/demo/L0-features/';
@@ -55,7 +55,7 @@ trajectories.beta = 0.01;
 trajectories.window_width = 300;
 trajectories.overlap = 150;
 trajectories.speed_limit = 30;
-trajectories.indifference_time = 450;
+trajectories.indifference_time = 100;
 trajectories.threshold = 8;
 
 % Identities

@@ -8,7 +8,6 @@ for iCam = 1:8
     sequence_window   = opts.sequence_intervals{opts.sequence};
     start_frame       = global2local(opts.start_frames(opts.current_camera), sequence_window(1));
     end_frame         = global2local(opts.start_frames(opts.current_camera), sequence_window(end));
-    
     % Load OpenPose detections for current camera
     %load(fullfile(opts.dataset_path, 'detections','OpenPose', sprintf('camera%d.mat',iCam)));
     load(fullfile(opts.detection,opts.detection_name, sprintf('camera%d.mat',iCam)));
@@ -30,6 +29,8 @@ for iCam = 1:8
     tracklets = struct([]);
     
     for window_start_frame   = start_frame : opts.tracklets.window_width : end_frame
+        % window_start_frame   = start_frame;
+        % window_start_frame   = window_start_frame + opts.tracklets.window_width;
         fprintf('%d/%d\n', window_start_frame, end_frame);
         
         % Retrieve detections in current window
@@ -37,7 +38,7 @@ for iCam = 1:8
         window_frames        = window_start_frame : window_end_frame;
         window_inds          = find(ismember(all_dets(:,2),window_frames));
         detections_in_window = all_dets(window_inds,:);
-        detections_conf      = sum(detections_in_window(:,5:3:end),2);
+        detections_conf      = sum(detections_in_window(:,5:3:end), 2);
         num_visible          = sum(detections_in_window(:,5:3:end)> opts.render_threshold, 2);
         
         % Use only valid detections
