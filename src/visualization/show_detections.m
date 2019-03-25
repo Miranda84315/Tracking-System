@@ -15,9 +15,13 @@ for frame = 122900:123030
     % start -> 123029
     img = opts.reader.getFrame(cam, frame);
     poses = detections(detections(:,1) == cam & detections(:,2) == frame,3:end);
-
     % Transform poses into boxes
+    poses = poses(find(poses(:, 5)==1), :);
     bboxes = poses(:,1:4);
+    img = insertObjectAnnotation(img,'rectangle',bboxes, ones(size(bboxes,1),1));
+    figure, imshow(img);
+    
+    bboxes = poses(find(poses(:, 5)==1),1:4);
     img = insertObjectAnnotation(img,'rectangle',bboxes, ones(size(bboxes,1),1));
     figure, imshow(img);
     close all

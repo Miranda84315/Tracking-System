@@ -29,6 +29,31 @@ for iCam = 1:8
         startFrame = endFrame   - opts.trajectories.overlap;
         endFrame   = startFrame + opts.trajectories.window_width;
     end
+    
+    % Convert trajectories 
+    % divide trajectories
+
+    trackerOutputRaw = trajectoriesToTop(trajectories);
+    % Interpolate missing detections
+    trackerOutputFilled = fillTrajectories(trackerOutputRaw);
+    % Remove spurius tracks
+    % -- I think the opt.minimum_trajectory_length should be more large
+    trackerOutputRemoved = removeShortTracks(trackerOutputFilled, opts.minimum_trajectory_length);
+    % Make identities 1-indexed
+    % --rename the id, because we remove the short tracklet
+    [~, ~, ic] = unique(trackerOutputRemoved(:,2));
+    trackerOutputRemoved(:,2) = ic;
+    trackerOutput = sortrows(trackerOutputRemoved,[2 1]);
+
+    %% Save trajectories
+    fprintf('Saving results\n');
+    fileOutput = trackerOutput(:, [1:6]);
+    dlmwrite(sprintf('%s/%s/L2-trajectories/cam%d_%s.txt', ...
+        opts.experiment_root, ...
+        opts.experiment_name, ...
+        iCam, ...
+        opts.sequence_names{opts.sequence}), ...
+        fileOutput, 'delimiter', ' ', 'precision', 6);
 
 
 end

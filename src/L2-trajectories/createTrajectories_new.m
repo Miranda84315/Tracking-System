@@ -35,7 +35,9 @@ for i = 1 : length(currentTrajectories)
        if k >= length(currentTrajectories(i).tracklets) - 5
            inAssociation(length(trackletLabels)) = true; %#ok
        end
-       
+       if isempty(currentTrajectories(i).tracklets(k).feature)
+           inAssociation(length(trackletLabels)) = false;
+       end
    end
 end
 inAssociation = logical(inAssociation);
