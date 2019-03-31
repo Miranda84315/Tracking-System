@@ -13,7 +13,7 @@ for iCam = 1:8
     load(fullfile(opts.detection,opts.detection_name, sprintf('camera%d.mat',iCam)));
     
     % Load features for all detections
-    filename = sprintf('%s%s/features%d.h5',opts.feature_dir, opts.detection_name, iCam)
+    filename = sprintf('%sopenpose/features%d.h5',opts.feature_dir, iCam)
     features   = h5read(filename,'/emb');
     %features   = h5read(sprintf('%s/%s/L0-features/features%d.h5',opts.experiment_root,opts.experiment_name,iCam),'/emb');
     features   = double(features');

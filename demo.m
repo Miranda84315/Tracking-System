@@ -11,10 +11,9 @@ end
 %% Run Tracker
 
 % opts.visualize = true;
-opts.sequence = 2; % trainval-mini
+opts.sequence = 1; % trainval-mini
 
-getBackground(opts);
-getDeleteDetection(opts);
+% getBackground(opts);
 % compute feature
 %compute_L0_features(opts);
 
@@ -22,13 +21,14 @@ getDeleteDetection(opts);
 % Tracklets
 if strcmp(opts.detection_name,'openpose')
     compute_L1_tracklets_openpose(opts);
+elseif strcmp(opts.detection_name,'openpose_bg')
+	compute_L1_tracklets_bg(opts);
 else
     compute_L1_tracklets(opts);
 end
-
+compute_L1_tracklets_bg(opts);
 % Single-camera trajectories
 opts.trajectories.appearance_groups = 1;
-compute_L2_trajectories(opts);
 compute_L2_trajectories_new(opts);
 opts.eval_dir = 'L2-trajectories';
 evaluate(opts);

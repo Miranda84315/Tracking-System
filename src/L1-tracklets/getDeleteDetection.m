@@ -1,4 +1,5 @@
 function getDeleteDetection(opts)
+
 for iCam=1:8
     load(fullfile(opts.detection,opts.detection_name, sprintf('camera%d.mat',iCam)));
     for k = 1:size(detections, 1)

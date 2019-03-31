@@ -18,7 +18,7 @@ for frame = 122900:123030
     % Transform poses into boxes
     poses = poses(find(poses(:, 5)==1), :);
     bboxes = poses(:,1:4);
-    img = insertObjectAnnotation(img,'rectangle',bboxes, ones(size(bboxes,1),1));
+    img = insertObjectAnnotation(img,'rectangle',bboxes, 1:size( bboxes, 1), 'LineWidth', 3, 'FontSize', 18);
     figure, imshow(img);
     
     bboxes = poses(find(poses(:, 5)==1),1:4);
@@ -38,5 +38,5 @@ for i = 1:size(poses,1)
     bboxes(i,:) = pose2bb(poses(i,:), opts.render_threshold);
     bboxes(i,:) = scale_bb(bboxes(i,:), poses(i,:), 1.25);
 end
-img = insertObjectAnnotation(img,'rectangle',bboxes, ones(size(bboxes,1),1));
+img = insertObjectAnnotation(img,'rectangle',bboxes, ones(size(bboxes,1),3));
 figure, imshow(img);

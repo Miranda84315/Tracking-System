@@ -23,6 +23,7 @@ end_sequence = 187540
 background_root = 'D:/Code/TrackingSystem/dataset/background/bg_cam'
 save_root = 'D:/Code/TrackingSystem/dataset/detections/openpose_bg/camera'
 
+
 def calucate_part(icam, frame):
     sum_frame = 0
     for part_num in range(0, 10):
@@ -111,10 +112,10 @@ def siftImageAlignment(img1, img2):
 
 
 def main():
-    icam = 5
+    icam = 7
     detections = load_mat(icam)
     bg = get_bg(icam)
-    for k in range(0, len(detections)):
+    for k in range(100, 200):
         print('----- detection = ', k, ' / ', len(detections))
         frame = int(detections[k, 1])
         left = int(detections[k, 2])
@@ -132,19 +133,32 @@ def main():
                 if flag is True:
                     height = detection_img.shape[0]
                     width = detection_img.shape[1]
+
+                    #detection_img = detection_img[10:height-20, 10:width-20]
+                    #result = result[10:height-20, 10:width-20]
+                    score = int(mse(detection_img, result))
+                    detection_bg2 = cv2.copyMakeBorder(detection_bg, 0, 0, 0, 10, cv2.BORDER_CONSTANT, value=[255, 255, 255])
+                    detection_img2= cv2.copyMakeBorder(detection_img, 0, 0, 0, 10, cv2.BORDER_CONSTANT, value=[255, 255, 255])
+                    allImg = np.concatenate((detection_bg2, detection_img2, result), axis=1)
+                    cv2.namedWindow('Result2', cv2.WINDOW_NORMAL)
+                    cv2.imshow('Result2', allImg)
+                    cv2.waitKey(0)
+                    cv2.imwrite('result/' + str(k) + '_' + str(score) + '.jpg', allImg)
+
                     detection_bg = detection_bg[10:height-20, 10:width-20]
                     detection_img = detection_img[10:height-20, 10:width-20]
                     result = result[10:height-20, 10:width-20]
-                    # allImg = np.concatenate((detection_bg, detection_img, result), axis=1)
-                    # cv2.namedWindow('Result', cv2.WINDOW_NORMAL)
-                    # cv2.imshow('Result', allImg)
-                    # cv2.waitKey(0)
-                    detections[k, 7] = mse(detection_img, result)
-                    if mse(detection_img, result) < 5000:
-                        detections[k, 6] = 0
-        if k % 1000 == 0:
-            scipy.io.savemat(save_root + str(icam) + '.mat', mdict={'detections': detections})
-    scipy.io.savemat(save_root + str(icam) + '.mat', mdict={'detections': detections})
+
+                    score = int(mse(detection_img, result))
+                    detection_bg = cv2.copyMakeBorder(detection_bg, 0, 0, 0, 10, cv2.BORDER_CONSTANT, value=[255, 255, 255])
+                    detection_img= cv2.copyMakeBorder(detection_img, 0, 0, 0, 10, cv2.BORDER_CONSTANT, value=[255, 255, 255])
+                    allImg = np.concatenate((detection_bg, detection_img, result), axis=1)
+                    cv2.namedWindow('Result', cv2.WINDOW_NORMAL)
+                    cv2.imshow('Result', allImg)
+                    cv2.waitKey(0)
+                    cv2.imwrite('result/' + str(k) + '_after' + str(score) + '.jpg', allImg)
+
+
 
 
 cv2.destroyAllWindows()

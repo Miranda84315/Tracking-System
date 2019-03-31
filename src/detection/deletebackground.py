@@ -147,11 +147,11 @@ def siftImageAlignment(img1, img2):
 
 
 def main():
-    icam = 1
+    icam = 5
     detections = load_mat(icam)
     bg = get_bg(icam)
     #detections = np.hstack((detections, np.ones((len(detections), 2))))
-    for k in range(420059, len(detections)):
+    for k in range(1570000, len(detections)):
         print('----- detection = ', k, ' / ', len(detections))
         frame = int(detections[k, 1])
         left = int(detections[k, 2])

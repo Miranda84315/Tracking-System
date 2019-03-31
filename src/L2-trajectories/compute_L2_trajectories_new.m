@@ -32,8 +32,9 @@ for iCam = 1:8
     
     % Convert trajectories 
     % divide trajectories
-
-    trackerOutputRaw = trajectoriesToTop(trajectories);
+    
+    divideResult = divideTrajectories(trajectories);
+    trackerOutputRaw = trajectoriesToTop(divideResult);
     % Interpolate missing detections
     trackerOutputFilled = fillTrajectories(trackerOutputRaw);
     % Remove spurius tracks
