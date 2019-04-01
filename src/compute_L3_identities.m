@@ -8,6 +8,8 @@ save(filename,'trajectories');
 %  load(filename);
 identities = trajectories;
 
+temp_identites = identities;
+
 for k = 1:length(identities)
     % -- get the global frame
     % -- get the start/end Frame
@@ -46,6 +48,6 @@ for iCam = 1:opts.num_cam
 end
 
 % -- to save trackerOutputL3
-filename_save = sprintf('%s/%s/L3-identities/L3Final_trajectories.mat',opts.experiment_root, opts.experiment_name);
+filename_save = sprintf('%s/%s/L3-identities/L3Final_trajectories_%s.mat', opts.experiment_root, opts.experiment_name, opts.sequence_names{opts.sequence});
 save(filename_save,'trackerOutputL3');
 load(filename_save);

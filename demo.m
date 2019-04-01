@@ -11,7 +11,7 @@ end
 %% Run Tracker
 
 % opts.visualize = true;
-opts.sequence = 1; % trainval-mini
+opts.sequence = 4; % trainval-mini
 
 % getBackground(opts);
 % compute feature

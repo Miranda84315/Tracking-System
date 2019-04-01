@@ -1,5 +1,7 @@
 function outputIdentities = linkIdentities( opts, inputIdentities, startTime, endTime)
-
+%inputIdentities =  identities;
+%startTime = startFrame;
+%endTime = endFrame;
 
 % find current, old, and future tracklets
 currentIdentitiesInd    = findTrajectoriesInWindow(inputIdentities, startTime, endTime);
@@ -62,19 +64,48 @@ for i = 1:length(uniqueLabels)
     end
     identity.trajectories = sortStruct(identity.trajectories,'startFrame');
 
-    
-    mergedIdentities = [mergedIdentities; identity];
-    
     data = [];
     for k = 1:length(identity.trajectories)
         data = [data; identity.trajectories(k).data];
     end
     frames = unique(data(:,9));
-    assert(length(frames) == size(data,1), 'Found duplicate ID/Frame pairs');
+    
+    if(length(frames) == size(data, 1))
+        mergedIdentities = [mergedIdentities; identity];
+    else
+        fprintf('length(frames) != size(data, 1)\n');
+        fprintf('i = %d )\n', i);
+        for k = 1:length(identity.trajectories)
+            new_identity = [];
+            new_identity.trajectories(k) = identity.trajectories(k);
+            new_identity.startFrame = identity.trajectories(k).startFrame;
+            new_identity.endFrame   = identity.trajectories(k).endFrame;
+            if ~isempty(new_identity)
+                mergedIdentities = [mergedIdentities; new_identity ];
+            end
+        end
+    end
+    %assert(length(frames) == size(data,1), 'Found duplicate ID/Frame pairs');
+    %mergedIdentities = [mergedIdentities; identity];
 end
 
 % merge co-identified trajectories
 outputIdentities = inputIdentities;
 outputIdentities(currentIdentitiesInd) = [];
-outputIdentities = [mergedIdentities', outputIdentities];
+
+%delete []
+mergedIdentities = mergedIdentities';
+checkMatrix = [];
+for k = 1:length(mergedIdentities)
+    delete_num = [];
+    for j = 1:length(mergedIdentities(k).trajectories)
+        checkMatrix = [checkMatrix; mergedIdentities(k).trajectories(j)];
+        if isempty(mergedIdentities(k).trajectories(j).data)
+            delete_num = [delete_num; j];
+        end
+    end
+    mergedIdentities(k).trajectories(delete_num) = [];
+end
+
+outputIdentities = [mergedIdentities, outputIdentities];
 

@@ -1,5 +1,8 @@
 function result = solveInGroupsIdentities(opts, trajectories, labels, VISUALIZE)
-
+%{
+trajectories = trajectories(inAssociation);
+ labels = trajectoryLabels(inAssociation);
+%}
 global identitySolverTime;
 
 params = opts.identities;
